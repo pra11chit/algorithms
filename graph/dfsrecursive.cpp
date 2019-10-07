@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <set>
-#include <stack>
 using namespace std;
 
 
@@ -13,7 +12,6 @@ void AddEdge(vector<vector<int>> &adjList, int u, int v)
 
 void dfs(vector<vector<int>> &adjList, set<int> &explored, int s, int v)
 {
-    stack<int> adjacent;
     explored.insert(s);
     int vertex = s;
     for (vector<int>::iterator iter = adjList[vertex].begin(); iter != adjList[vertex].end(); ++iter)
