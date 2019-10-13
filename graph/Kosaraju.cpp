@@ -56,17 +56,16 @@ void Kosaraju(auto adjList, auto adjListRev) {
     vector<int> scc(adjList.size());
     TopoSort(adjListRev, exploredRev, order);
     numScc = 0;
-    for(int i = 0; i < order.size(); ++i) {
-        if(!explored.count(i)) {
+    cout << endl << "Topological Ordering :" << endl;
+    while(!order.empty()) {
+        int top = order.top();
+        cout << top << "-";
+        order.pop();
+        if(!explored.count(top)) {
             numScc = numScc + 1;
-            DfsScc(adjList, i, explored, scc, numScc);
+            DfsScc(adjList,top, explored, scc, numScc);
         }
     }
-    while(order.empty() == false) {
-        cout << order.top() << "-";
-        order.pop();
-    }
-
     cout << endl << "SCCs" << endl;
     for(int j = 0; j < scc.size(); ++j) {
         cout << scc[j] << "-";
@@ -85,7 +84,6 @@ int main() {
     PrintGraph(adjListRev);
     cout << endl;
     Kosaraju(adjList, adjListRev);
+    cout << endl;
     return 0;
 }
-
-
