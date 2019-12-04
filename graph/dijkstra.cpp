@@ -1,69 +1,79 @@
-//Input:- directed graph G with adjacency list representation, vertex s, length of each edge
-//Post-Condition:-shortest path dist of every vertex
 #include <iostream>
 #include <vector>
+#include <utility>
 #include <set>
-#include <stack>
-#include <limits.h>
 using namespace std;
 
-void AddEdge(auto &adjList, int u, int v) {
-    adjList[u].push_back(v);
-}
+const int size = 4;
+vector<pair<int, int>> adj[size];
+vector<bool> marked(size, false);
+set<int> X;
+vector<int> spd(size);
 
-void PrintGraph(auto &adjList) {
-    for(int i = 0; i < adjList.size(); ++i) {
-        cout << i << endl;
-        for(int j = 0; j < adjList[i].size(); ++j) {
-            cout << "->" << adjList[i][j];
+bool iswholemarked() {
+    for (bool i : marked) {
+        if (i == false) {
+            return true;
         }
-        cout << endl;
     }
+    return false;
 }
 
-void dijkstra(auto &adjList, int s, auto &len) {
-    set<int> explored;
-    explored.insert(s);
-    vector<int> dist(4, INT_MAX);
-    dist[s] = 0;
-    set<int>::iterator set_itr;
-    int min = 0;
-    int d_value;
-    int vstar, wstar;
-    while(explored.size() != adjList.size()) { 
-        for(set_itr = explored.begin(); set_itr != explored.end(); ++set_itr) {
-            for(int i = 0; i < adjList[(*set_itr)].size(); ++i) {
-                if(!explored.count(adjList[*set_itr][i])) {
-                    if(i == 0 && set_itr == explored.begin()) {
-                        min = dist[0] + len[adjList[0][0]];
-                    }
-                    d_value = dist[*set_itr] + len[adjList[*set_itr][i]];
-                    if(d_value <= min) {
-                        min = d_value;
-                        vstar = *set_itr;
-                        wstar = adjList[*set_itr][i];
+void AddEdge(int u, int v, int weight) {
+    adj[u].push_back(make_pair(v, weight));
+}
+
+void dijkstra(int s) {
+    set<int>::iterator iter;
+    X.insert(s);
+    spd[s] = 0;
+    marked[s] = true;
+    int mindist = 10001, dist = 0; //taking random large value 
+    int minu = 0, minv = 0;
+    while (iswholemarked()) {
+        for (iter = X.begin(); iter != X.end(); ++iter) {
+            for (int j = 0; j < adj[*iter].size(); ++j) {
+                if (marked[(adj[*iter][j]).first] == false) {
+                    dist = spd[*iter] + (adj[*iter][j]).second;
+                    if (dist < mindist) {
+                        mindist = dist;
+                        minu = *iter;
+                        minv = (adj[*iter][j]).first;
                     }
                 }
             }
         }
-    explored.insert(wstar);
-    dist[wstar] = d_value;
-
-    }
-    cout << endl;
-    for(int j = 0; j < adjList.size(); ++j) {
-        cout << j << "-" << dist[j];
+        X.insert(minv);
+        marked[minv] = true;
+        spd[minv] = mindist;
+        mindist = 10001;
     }
 }
 
 int main() {
-    vector<vector<int>> adjList(4);
-    AddEdge(adjList, 0, 1);
-    AddEdge(adjList, 0, 2);
-    AddEdge(adjList, 1, 3);
-    AddEdge(adjList, 2, 3);
-    PrintGraph(adjList);
-    vector<int> len = {5, 10, 15, 20};
-    dijkstra(adjList, 0, len);
+    
+    AddEdge(1, 0, 4);
+    AddEdge(1, 2, 1);
+    AddEdge(2, 0, 2);
+    AddEdge(2, 3, 6);
+    AddEdge(0, 3, 3);   
+    
+    //print the graph
+    for(int i = 0; i < 4; ++i) {
+        cout << "Vertex " << i << endl;
+        for(int j = 0; j < adj[i].size(); ++j) {
+            cout << "-->" << (adj[i][j]).first << "[weight: " << (adj[i][j]).second << " ]";
+        }
+        cout << endl;
+    }
+
+    int s;
+    cin >> s;
+    dijkstra(s);
+
+    for (int i : spd) {
+        cout << i << " ";
+    }
+
     return 0;
 }
